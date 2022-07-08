@@ -41,9 +41,10 @@ trait ApiResponseHelper
 
         //204
         $this->respondNoContent(?array $data = [])
+    */
 
-
-    private ?array $_api_helpers_defaultSuccessData = ['success' => true];
+    private ?array $_api_helpers_defaultSuccessData = ['response' => 'success'];
+    private ?array $_api_helpers_defaultForbiddenData = ['response' => 'forbidden'];
 
     /**
      * @param string|\Exception $message
@@ -61,18 +62,12 @@ trait ApiResponseHelper
         );
     }
 
-    /**
-     * @param array|Arrayable|JsonSerializable|null $contents
-     */
-    public function respondWithSuccess($contents = null): JsonResponse
-    {
-        $contents = $this->morphToArray($contents) ?? [];
-
-        $data = [] === $contents
-            ? $this->_api_helpers_defaultSuccessData
-            : $contents;
-
-        return $this->apiResponse($data);
+    public function respondWithSuccess(?array $data = null): JsonResponse
+    {   
+        $data ??= [];
+        return $this->apiResponse(
+            ['state' => 'Success', 'data' => $this->morphToArray($data), 'code' => 200]
+        );
     }
 
     public function setDefaultSuccessResponse(?array $content = null): self
@@ -81,47 +76,49 @@ trait ApiResponseHelper
         return $this;
     }
 
-    public function respondOk(string $message): JsonResponse
-    {
-        $data ??= [];
-        return $this->respondWithSuccess(['state' => 'success', $this->morphToArray($data), 'code' => 200]);
-    }
-
-    public function respondUnAuthenticated(?string $data = null): JsonResponse
+    public function respondOk(?array $data = null): JsonResponse
     {   
         $data ??= [];
         return $this->apiResponse(
-            ['state' => 'unauthenticated', $this->morphToArray($data), 'code' => 401],
+            ['state' => 'Ok', 'data' => $this->morphToArray($data), 'code' => 200]
+        );
+    }
+
+
+    public function respondUnAuthenticated(?array $data = null): JsonResponse
+    {   
+        $data ??= [];
+        return $this->apiResponse(
+            ['state' => 'Not Authorized', 'data' => $this->morphToArray($data), 'code' => 401],
             Response::HTTP_UNAUTHORIZED
         );
     }
 
-    public function respondForbidden(?string $data = null): JsonResponse
-    {        
+    public function respondForbidden(?array $data = null): JsonResponse
+    {   
         $data ??= [];
         return $this->apiResponse(
-            ['state' => 'forbidden', $this->morphToArray($data), 'code' => 403],
+            ['state' => 'Forbidden', 'data' => $this->morphToArray($data), 'code' => 403],
             Response::HTTP_FORBIDDEN
         );
     }
 
-    public function respondError(?string $message = null): JsonResponse
-    {
+    public function respondError(?array $data = null): JsonResponse
+    {   
+        $data ??= [];
         return $this->apiResponse(
-            ['state' => 'bad_request', 'code' => 400],
+            ['state' => 'Bad Request', 'data' => $this->morphToArray($data), 'code' => 400],
             Response::HTTP_BAD_REQUEST
         );
     }
 
-    /**
-     * @param array|Arrayable|JsonSerializable|null $data
-     */
-    public function respondCreated($data = null): JsonResponse
-    {
+
+    public function respondCreated(?array $data = null): JsonResponse
+    {   
         $data ??= [];
         return $this->apiResponse(
-          $this->morphToArray($data),
-          Response::HTTP_CREATED
+            ['state' => 'Created', 'data' => $this->morphToArray($data), 'code' => 200],
+            Response::HTTP_CREATED
         );
     }
     
