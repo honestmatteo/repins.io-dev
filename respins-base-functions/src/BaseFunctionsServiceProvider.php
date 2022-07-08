@@ -5,14 +5,13 @@ namespace Respins\BaseFunctions;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Respins\BaseFunctions\Commands\BaseFunctionsCommand;
+use Respins\BaseFunctions\ProxyHelper;
 
 class BaseFunctionsServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
-    {
-        /*
-         * configuration of base package
-         */
+    {   
+        //Register package functions
         $package
             ->name('base-functions')
             ->hasConfigFile()
@@ -20,6 +19,12 @@ class BaseFunctionsServiceProvider extends PackageServiceProvider
             ->hasRoutes(['base', 'game'])
             ->hasMigration('create_gamesessions_table')
             ->hasCommand(BaseFunctionsCommand::class);
+
+            //Register the proxy
+            $this->app->bind('ProxyHelper', function($app) {
+                return new ProxyHelper();
+            });
+            
     }
 }
 

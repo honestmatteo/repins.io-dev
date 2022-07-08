@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Respins\BaseFunctions;
 use Illuminate\Http\Request;
-use Respins\BaseFunctions\Controllers\RoutingController;
+use Respins\BaseFunctions\Controllers\EndpointRouter;
+use Respins\BaseFunctions\Facades\ProxyHelperFacade;
+
 ## Base.php
 # If using system across different domains/hosts or productionalm, make sure to read general explaination regarding laravel routing/mw:
 # Laravel Middleware @ https://laravel.com/docs/9.x/middleware
@@ -11,7 +13,7 @@ use Respins\BaseFunctions\Controllers\RoutingController;
 # API Middleware 
 # Headerless data (without frontend) under most circumstances will be JSON data, but can also be form-data, XML data or whatever is needed.
 Route::middleware('api', 'throttle:500,1')->prefix('api')->group(function () {
-    Route::get('/aggregation/requestSession', [EndpointRouter::class, 'createSession']);
+    Route::get('/aggregation/createSession', [EndpointRouter::class, 'createSession']);
 });
 
 ## Auth Middleware
