@@ -10,8 +10,8 @@ use Respins\BaseFunctions\Controllers\RoutingController;
 
 # API Middleware 
 # Headerless data (without frontend) under most circumstances will be JSON data, but can also be form-data, XML data or whatever is needed.
-Route::middleware('api', 'throttle:500,1')->group(function () {
-    Route::get('/aggregation/createSession', [RoutingController::class, 'createSession']);
+Route::middleware('api', 'throttle:500,1')->prefix('api')->group(function () {
+    Route::get('/aggregation/requestSession', [EndpointRouter::class, 'createSession']);
 });
 
 ## Auth Middleware
@@ -23,7 +23,5 @@ Route::middleware('auth', 'throttle:2000,1')->group(function () {
 ## Web middleware
 # Middleware to use when in need to 'catch' legitimate player request data to forward using our proxy helpers or to display frontend pre-auth on casino level.
 Route::middleware('web', 'throttle:2000,1')->group(function () {
-    Route::get('/hoppa', function () {
-        return view('respins-base-views::error-default-template')->with('error', $message);
-    });
+ 
 });
